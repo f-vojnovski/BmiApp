@@ -10,10 +10,10 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using Repository.BmiRepository;
 using Service;
 
 namespace BMI_Calculator
@@ -35,6 +35,10 @@ namespace BMI_Calculator
 
             services.AddControllers();
 
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            services.ConfigureJwt(Configuration);
+
             services.AddCors(o =>
             {
                 o.AddPolicy("AllowAll", builder =>
@@ -44,8 +48,13 @@ namespace BMI_Calculator
             });
 
 
-
             services.AddServiceLayer();
+
+            services.AddRepositoryLayer();
+
+            services.AddTransient<IBmiService, BmiService>();
+
+            services.AddAutoMapper();
 
             services.AddSwaggerGen(c =>
             {
@@ -68,6 +77,8 @@ namespace BMI_Calculator
             app.UseCors("AllowAll");
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

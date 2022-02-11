@@ -12,3 +12,4 @@ C:\Users\Gamer\source\repos\BMI Calculator\Data\obj\Debug\net5.0\Data.dll
 C:\Users\Gamer\source\repos\BMI Calculator\Data\obj\Debug\net5.0\ref\Data.dll
 C:\Users\Gamer\source\repos\BMI Calculator\Data\obj\Debug\net5.0\Data.pdb
 C:\Users\Gamer\source\repos\BMI Calculator\Data\obj\Debug\net5.0\Data.genruntimeconfig.cache
+C:\Users\Gamer\source\repos\BMI Calculator\Data\obj\Debug\net5.0\Data.csproj.AssemblyReference.cache

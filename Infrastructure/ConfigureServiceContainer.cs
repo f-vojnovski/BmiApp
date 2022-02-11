@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository
+namespace Infrastructure
 {
-    public interface IUnitOfWork
+    public static class ConfigureServiceContainer
     {
-        Task<int> SaveChangesAsync();
+
     }
 }

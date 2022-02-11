@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Data;
+using Data.Model;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Service;
 using Service.Dto;
+using Service.Dto.Bmi;
 
 namespace BMI_Calculator.Controllers
 {
@@ -17,12 +23,20 @@ namespace BMI_Calculator.Controllers
             this._bmiService = bmiService;
         }
 
-        [HttpGet("{email}")]
-        public ActionResult<IEnumerable<BmiReadRecordDto>> GetBmiRecordsByEmail(String email)
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<IEnumerable<BmiRecord>>> GetBmiRecordsByEmail(String email)
         {
-            var bmiRecords = _bmiService.GetAllBmiRecordsByEmail(email);
+            var bmiRecords = await _bmiService.GetAllBmiRecordsByEmail(email);
 
             return Ok(bmiRecords);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateBmiRecord([FromBody] BmiWriteRecordDto bmiWriteRecordDto)
+        {
+            await _bmiService.AddBmiRecord(bmiWriteRecordDto);
+
+            return Ok();
         }
     }
 }

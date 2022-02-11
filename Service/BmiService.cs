@@ -3,24 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Repository.BmiRepository;
+using AutoMapper;
+using Data.Model;
+using Repository.Core;
 using Service.Dto;
-using Service.EntityMappers;
+using Service.Dto.Bmi;
 
 namespace Service
 {
     public class BmiService : IBmiService
     {
-        private readonly BmiRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public BmiService(BmiRepository repository)
+        public BmiService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this._repository = repository;
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
         }
 
-        public IEnumerable<BmiReadRecordDto> GetAllBmiRecordsByEmail(string email)
+        public async Task<IEnumerable<BmiReadRecordDto>> GetAllBmiRecordsByEmail(string email)
         {
-            return BmiRecordsMapper.MapBmiRecordsToBmiReadRecordDtos(_repository.GetBmiRecordsByEmail(email));
+            var bmiRecords = await _unitOfWork.BmiRecords.GetByEmailAsync(email);
+
+            var bmiRecordsDto = _mapper.Map<IEnumerable<BmiReadRecordDto>>(bmiRecords);
+
+            return bmiRecordsDto;
+        }
+
+        public async Task AddBmiRecord(BmiWriteRecordDto bmiWriteRecordDto)
+        {
+            var bmiRecord = _mapper.Map<BmiRecord>(bmiWriteRecordDto);
+
+            _unitOfWork.BmiRecords.AddRecord(bmiRecord);
+            await _unitOfWork.Save();
         }
     }
 }
