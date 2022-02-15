@@ -1,0 +1,24 @@
+<div class="container">
+    <mat-card>
+        <mat-card-content>
+            <div class="box">
+                <mat-card-title>BMI Calculator</mat-card-title>
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Weight (kg)</mat-label>
+                    <input matInput type="number" [(ngModel)]="userWeight">
+                </mat-form-field>
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Height (cm)</mat-label>
+                    <input value="userHeight" matInput type="number" [(ngModel)]="userHeight">
+                </mat-form-field>
+                <mat-card-actions>
+                    <button mat-raised-button color="primary" (click)="onCalculateBmi()">Calculate</button>
+                </mat-card-actions>
+                <div *ngIf="calculatedBmi" class="bmi-display-div">
+                    Your BMI is:
+                    <span>{{calculatedBmi | number:'1.2-2'}}</span>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

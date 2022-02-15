@@ -1,0 +1,12 @@
+.container {
+  width: 400px;
+  margin: auto;
+}
+
+.bmi-display-div {
+  font-size: large;
+}
+
+.bmi-display-div span {
+  font-weight: bold;
+}

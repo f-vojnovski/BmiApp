@@ -12,6 +12,7 @@ using Service.Dto.Auth;
 
 namespace BMI_Calculator.Controllers
 {
+    [Route("api/auth")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApiUser> _userManager;

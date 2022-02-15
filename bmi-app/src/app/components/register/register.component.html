@@ -1,0 +1,37 @@
+<div class="register-form">
+    <mat-card>
+        <form [formGroup]="registerForm" (ngSubmit)="registerUser(registerForm.value)">
+            <mat-card-title>Register</mat-card-title>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput formControlName="email" placeholder="Ex. filip@yahoo.com">
+                <mat-error *ngIf="f['email'].hasError('email') && !f['email'].hasError('required')">
+                    Please enter a valid email address
+                </mat-error>
+                <mat-error *ngIf="f['email'].hasError('required')">
+                    Email is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Password</mat-label>
+                <input type="password" matInput formControlName="password">
+                <mat-error *ngIf="f['password'].hasError('required')">
+                    Password is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Confirm password</mat-label>
+                <input type="password" matInput formControlName="confirmPassword">
+                <mat-error *ngIf="f['confirmPassword'].hasError('required')">
+                    Password must be <strong>confirmed</strong>
+                </mat-error>
+            </mat-form-field>
+            <mat-card-actions>
+                <button mat-raised-button color="primary" type="submit">Register</button>
+            </mat-card-actions>
+            <div *ngIf="errorMessage">
+                <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
+            </div>
+        </form>
+    </mat-card>
+</div>

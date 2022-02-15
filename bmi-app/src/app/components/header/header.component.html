@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <span class="home-button" routerLink="">Bmi App</span>
+        <span class="spacer"></span>
+        <span *ngIf="!isUserAuthenticated">
+            <span class="button-span">
+                <button mat-stroked-button routerLink="login">Login</button>
+            </span>
+            <span class="button-span">
+                <button mat-stroked-button routerLink="register">Register</button>
+            </span>
+        </span>
+        <span *ngIf="isUserAuthenticated">
+            <button mat-stroked-button>Log out</button>
+        </span>
+    </mat-toolbar-row>
+</mat-toolbar>
