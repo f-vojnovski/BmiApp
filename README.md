@@ -119,6 +119,9 @@ In overall, sooo much time wasted on configurations :(. I believe I could have d
 # Possible improvement
 Since I don't want to send this project too late, I will mention these changes I want to do and then implement them if needed.
 
+## General
+- I really should have not put the cleint side app in the same folder as the sln. I didn't plan for this since I thought it was going to be like on previous projects I've worked on where the client and api are on a seperate git repo.
+
 ## API
 - The API folder structure could use some work. I was in a hurry and I believe this can be slightly improved in some places.
 - You might notice that some dependencies are not declared in the correct project, this is because I have never built a project with this architecture from the ground up before, and I additionally ran into some problems while developing, which resulted in me possibly declaring the dependencies in the wrong place.
