@@ -1,0 +1,11 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.button-span {
+  margin: 0 5px 0 5px;
+}
+
+.home-button {
+  cursor: pointer;
+}
