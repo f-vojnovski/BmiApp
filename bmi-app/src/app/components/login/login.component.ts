@@ -14,7 +14,7 @@ import { OnLoginSuccessComponent } from '../on-login-success/on-login-success.co
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  navigationUrl: string = "";
+  navigationUrl: string = '';
   errorMessage?: string;
 
   constructor(
@@ -48,14 +48,12 @@ export class LoginComponent implements OnInit {
     };
 
     this.authService.loginUser(loginDto).subscribe({
-      next: (res) => {
+      next: () => {
         this.dialog.open(OnLoginSuccessComponent);
-        localStorage.setItem('token', res.token);
-        this.authService.sendAuthStateChangeNotification(true);
         this.router.navigate([this.navigationUrl]);
       },
       error: () => {
-        this.errorMessage = "Invalid credentials!";
+        this.errorMessage = 'Invalid credentials!';
       },
     });
   };

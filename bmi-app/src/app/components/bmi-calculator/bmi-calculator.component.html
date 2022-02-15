@@ -15,8 +15,14 @@
                     <button mat-raised-button color="primary" (click)="onCalculateBmi()">Calculate</button>
                 </mat-card-actions>
                 <div *ngIf="calculatedBmi" class="bmi-display-div">
-                    Your BMI is:
-                    <span>{{calculatedBmi | number:'1.2-2'}}</span>
+                    <div>
+                        Your BMI is:
+                        <span>{{calculatedBmi | number:'1.2-2'}}</span>
+                    </div>
+                    <mat-card-actions class="save-results-div" *ngIf="isUserAuthenticated">
+                        <button *ngIf="!resultSaved" mat-raised-button (click)="onSaveBmi()">Save Result</button>
+                    </mat-card-actions>
+                    <mat-card-subtitle *ngIf="resultSaved">Result saved to database!</mat-card-subtitle>
                 </div>
             </div>
         </mat-card-content>

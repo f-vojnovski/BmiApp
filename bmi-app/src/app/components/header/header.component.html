@@ -11,7 +11,8 @@
             </span>
         </span>
         <span *ngIf="isUserAuthenticated">
-            <button mat-stroked-button>Log out</button>
+            <button mat-stroked-button routerLink="records">View Results</button>
+            <button mat-stroked-button (click)="onLogout()">Log out</button>
         </span>
     </mat-toolbar-row>
 </mat-toolbar>

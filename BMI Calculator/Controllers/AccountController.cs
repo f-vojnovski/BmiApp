@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Data.Model.Auth;
@@ -59,7 +57,7 @@ namespace BMI_Calculator.Controllers
                 await _userManager.AddToRolesAsync(user, userDto.Roles);
                 return Accepted();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Problem($"Something Went Wrong in the {nameof(Register)}", statusCode: 500);
             }
@@ -83,7 +81,7 @@ namespace BMI_Calculator.Controllers
 
                 return Accepted(new { Token = await _authManager.CreateToken() });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Problem($"Something Went Wrong in the {nameof(Login)}", statusCode: 500);
             }

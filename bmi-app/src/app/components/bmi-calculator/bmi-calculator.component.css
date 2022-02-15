@@ -1,6 +1,5 @@
 .container {
   width: 400px;
-  margin: auto;
 }
 
 .bmi-display-div {
@@ -9,4 +8,8 @@
 
 .bmi-display-div span {
   font-weight: bold;
+}
+
+.save-results-div {
+  margin-top: 10px;
 }

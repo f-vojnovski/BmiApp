@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Data;
 using Data.Model;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Service;
@@ -23,6 +24,7 @@ namespace BMI_Calculator.Controllers
             this._bmiService = bmiService;
         }
 
+        [Authorize]
         [HttpGet("email/{email}")]
         public async Task<ActionResult<IEnumerable<BmiRecord>>> GetBmiRecordsByEmail(String email)
         {
@@ -31,6 +33,7 @@ namespace BMI_Calculator.Controllers
             return Ok(bmiRecords);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> CreateBmiRecord([FromBody] BmiWriteRecordDto bmiWriteRecordDto)
         {
