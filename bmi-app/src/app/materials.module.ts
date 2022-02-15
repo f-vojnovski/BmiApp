@@ -8,9 +8,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatCardModule} from '@angular/material/card';
-import {MatDialogModule} from '@angular/material/dialog';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 
 const mat = [
   MatButtonModule,
@@ -22,15 +22,12 @@ const mat = [
   MatInputModule,
   MatFormFieldModule,
   MatCardModule,
-  MatDialogModule
+  MatDialogModule,
+  MatTableModule
 ];
 
 @NgModule({
-  imports: [
-    ...mat,
-  ],
-  exports: [
-    ...mat,
-  ],
+  imports: [...mat],
+  exports: [...mat],
 })
-export class MaterialModule { }
+export class MaterialModule {}

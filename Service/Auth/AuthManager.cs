@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Data.Model.Auth;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Dto.Auth;
 
@@ -78,7 +75,7 @@ namespace Service.Auth
                 jwtSettings.GetSection("lifetime").Value));
 
             var token = new JwtSecurityToken(
-                issuer: jwtSettings.GetSection("validIssuer").Value,
+                issuer: jwtSettings.GetSection("Issuer").Value,
                 claims: claims,
                 expires: expiration,
                 signingCredentials: signingCredentials

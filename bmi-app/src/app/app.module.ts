@@ -12,9 +12,10 @@ import { RegisterComponent } from './components/register/register.component';
 import { HttpClientModule } from '@angular/common/http';
 import { OnRegisterSuccessComponent } from './components/on-register-success/on-register-success.component';
 import { OnLoginSuccessComponent } from './components/on-login-success/on-login-success.component';
+import { ViewBmiRecordsComponent } from './components/view-bmi-records/view-bmi-records.component';
 
 @NgModule({
-  declarations: [AppComponent, BmiCalculatorComponent, HeaderComponent, LoginComponent, RegisterComponent, OnRegisterSuccessComponent, OnLoginSuccessComponent],
+  declarations: [AppComponent, BmiCalculatorComponent, HeaderComponent, LoginComponent, RegisterComponent, OnRegisterSuccessComponent, OnLoginSuccessComponent, ViewBmiRecordsComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
