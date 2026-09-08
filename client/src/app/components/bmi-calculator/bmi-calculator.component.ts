@@ -38,7 +38,6 @@ export class BmiCalculatorComponent implements OnInit {
 
   onSaveBmi(): void {
     const bmiRecord: BmiWriteRecordDto = {
-      email: this.authService.currentUserValue.email,
       weight: this.userWeight,
       height: this.userHeight,
       bmi: this.calculatedBmi

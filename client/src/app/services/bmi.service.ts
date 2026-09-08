@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { BmiReadRecordDto, BmiWriteRecordDto } from '../interfaces/bmi';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +9,7 @@ import { AuthService } from './auth.service';
 export class BmiService {
   apiUrl: string = environment.apiUrl;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   public saveBmiRecord = (body: BmiWriteRecordDto) => {
     return this.http.post<any>(
@@ -21,10 +20,7 @@ export class BmiService {
 
   public readBmiRecords = () => {
     return this.http.get<any>(
-      this.createCompleteRoute(
-        `api/bmi/email/${this.authService.currentUserValue.email}`,
-        this.apiUrl
-      )
+      this.createCompleteRoute('api/bmi', this.apiUrl)
     );
   };
 

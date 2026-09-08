@@ -81,7 +81,7 @@ token validation parameters and takes the signing key from configuration through
 means the API refuses to start if the key was never supplied.
 
 ## Web API
-The Web Api layer is responsible for handling user requests. There are two controllers, one is the AccountsController, which handles requests related to logging in and registering, and the BmiController, which contains two endpoints for writing and reading BMI records (these endpoints are authenticated so a JWT token from the API is needed to execute these requests successfully). Both controllers communicate with both the service layer and the client to perform these operations.
+The Web Api layer is responsible for handling user requests. There are two controllers, one is the AccountsController, which handles requests related to logging in and registering, and the BmiRecordsController, which contains two endpoints for writing and reading BMI records (these endpoints are authenticated so a JWT token from the API is needed to execute these requests successfully). The record owner is read from the claims on that token, so both endpoints act on the caller's own records and take no user identifier from the route or the request body. Both controllers communicate with both the service layer and the client to perform these operations.
 
 # Client App
 The client app is built in Angular, it is relatively simple, so here I will list a few examples and a few more interesting classes.
@@ -135,6 +135,8 @@ DTOs are kept separate from entities on purpose. The shape the API exposes and t
 
 Authentication uses Microsoft Identity for user and role storage and JWT bearer tokens for the API itself, which keeps the endpoints stateless: `BmiRecordsController` needs nothing but the token to authorize a request. `AuthManager` validates credentials against Identity and mints the token, and the signing key is read through `JwtKey` so both signing and validation agree on where it comes from and fail the same way when it is absent.
 
+Record ownership follows from that token rather than from the request. `BmiRecordsController` reads the name claim and hands it to the service layer, which means a caller reads and writes their own history and there is no owner field for a request to set. Registration works the same way round: the role is a constant in the controller, and the password goes to `UserManager.CreateAsync` so the configured Identity validators run instead of being bypassed by hashing it by hand.
+
 Migrations live in `BmiApp.Repository` next to the context, while the connection string lives in `BmiApp.Api`. That split is why the `dotnet ef` command under Getting started passes a project and a startup project separately, and it keeps database configuration in the layer that owns the database.
 
 # Roadmap
@@ -142,7 +144,6 @@ Migrations live in `BmiApp.Repository` next to the context, while the connection
 Natural next steps, in rough order of how much they would add:
 
 ## API
-- Read the user identity from the token in the BMI record endpoints instead of taking an email from the route, so a record is always scoped to the caller who owns it.
 - Move the remaining credential handling out of AccountController and into AuthManager, leaving the controller to translate results into HTTP responses.
 - Add refresh tokens with a shorter access token lifetime, and server side invalidation so logging out revokes a token rather than only discarding it on the client.
 - Return validation problems through a single exception handling middleware, so every endpoint reports failures in the same shape.

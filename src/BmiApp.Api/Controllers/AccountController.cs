@@ -13,6 +13,9 @@ namespace BmiApp.Api.Controllers
     [Route("api/auth")]
     public class AccountController : ControllerBase
     {
+        // Registration always grants exactly this role. It is never taken from the request.
+        private const string DefaultRole = "User";
+
         private readonly UserManager<ApiUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IAuthManager _authManager;
@@ -43,8 +46,10 @@ namespace BmiApp.Api.Controllers
             {
                 var user = _mapper.Map<ApiUser>(userDto);
                 user.UserName = userDto.Email;
-                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, userDto.Password);
-                var result = await _userManager.CreateAsync(user);
+
+                // Passing the password to CreateAsync runs the configured password
+                // validators and lets Identity do the hashing.
+                var result = await _userManager.CreateAsync(user, userDto.Password);
 
                 if (!result.Succeeded)
                 {
@@ -54,7 +59,7 @@ namespace BmiApp.Api.Controllers
                     }
                     return BadRequest(ModelState);
                 }
-                await _userManager.AddToRolesAsync(user, userDto.Roles);
+                await _userManager.AddToRoleAsync(user, DefaultRole);
                 return Accepted();
             }
             catch (Exception)

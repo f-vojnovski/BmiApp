@@ -5,7 +5,6 @@ export interface BmiReadRecordDto {
 }
 
 export interface BmiWriteRecordDto {
-    email: string,
     weight: number,
     height: number,
     bmi: number

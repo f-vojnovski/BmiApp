@@ -58,7 +58,6 @@ export class RegisterComponent implements OnInit {
     const registerDto: RegisterDto = {
       email: register.email,
       password: register.password,
-      roles: ['User'],
     };
 
     this.authService.registerUser(registerDto).subscribe({
