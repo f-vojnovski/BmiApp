@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BmiApp.Data;
+using BmiApp.Data.Model;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using BmiApp.Service;
+using BmiApp.Service.Dto.Bmi;
+
+namespace BmiApp.Api.Controllers
+{
+    [ApiController]
+    [Route("api/bmi")]
+    public class BmiRecordsController : ControllerBase
+    {
+        private readonly IBmiService _bmiService;
+
+        public BmiRecordsController(IBmiService bmiService)
+        {
+            this._bmiService = bmiService;
+        }
+
+        [Authorize]
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<IEnumerable<BmiRecord>>> GetBmiRecordsByEmail(String email)
+        {
+            var bmiRecords = await _bmiService.GetAllBmiRecordsByEmail(email);
+
+            return Ok(bmiRecords);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> CreateBmiRecord([FromBody] BmiWriteRecordDto bmiWriteRecordDto)
+        {
+            await _bmiService.AddBmiRecord(bmiWriteRecordDto);
+
+            return Ok();
+        }
+    }
+}
