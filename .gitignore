@@ -1,0 +1,78 @@
+## ---------------------------------------------------------------
+## .NET build output
+## ---------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+project.lock.json
+project.fragment.lock.json/
+
+## ---------------------------------------------------------------
+## Visual Studio / Rider / VS Code local state
+## ---------------------------------------------------------------
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.dtbcache.json
+*.dbmdl
+*.jfm
+
+## ---------------------------------------------------------------
+## Local configuration and secrets
+## The JWT signing key is supplied through user secrets or an
+## environment variable, never through a committed file.
+## ---------------------------------------------------------------
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+*.pfx
+*.publishsettings
+PublishProfiles/
+
+## ---------------------------------------------------------------
+## NuGet
+## ---------------------------------------------------------------
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+.nuget/
+
+## ---------------------------------------------------------------
+## Angular client (client/)
+## client/.gitignore covers the CLI defaults; these are a backstop.
+## ---------------------------------------------------------------
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+## ---------------------------------------------------------------
+## Test and coverage output
+## ---------------------------------------------------------------
+[Tt]est[Rr]esult*/
+coverage/
+*.coverage
+*.trx
+
+## ---------------------------------------------------------------
+## OS noise
+## ---------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

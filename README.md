@@ -1,6 +1,8 @@
 # BmiApp
 
-Hello, welcome to my BMI Application. I will list all of the things I have implemented and things I intend to improve.
+A BMI calculator built as a full stack .NET application: an ASP.NET Core Web API with token based authentication, behind an Angular single page client. Visitors can calculate their BMI without an account, and registered users can save their results and review them later.
+
+The sections below walk through each layer of the API, then the client app, then the reasoning behind the way it is put together. Setup instructions are at the end.
 
 This application uses: 
 - asp.net core 5.0
@@ -10,11 +12,22 @@ This application uses:
 - SQL database
 - Auto Mapper for mapping entities to DTO and vice versa
 - MediatR for less code coupling.
+- Angular 13 with Angular Material for the client app
 
 # Api
 Here is the API project structure:
 
-![image](https://user-images.githubusercontent.com/48998036/154116364-be852e4f-c1ae-4039-84e8-d5a945b0a0a2.png)
+```
+BmiApp.sln
+src/
+├── BmiApp.Api/         controllers, Startup, configuration
+├── BmiApp.Service/     business logic, DTOs, AutoMapper profile, JWT auth manager
+├── BmiApp.Repository/  DbContext, repositories, unit of work, EF Core migrations
+└── BmiApp.Data/        entities and the Identity role configuration
+client/                 Angular client, outside the solution
+```
+
+`BmiApp.Api` depends on `BmiApp.Service` for business logic, and on `BmiApp.Repository` and `BmiApp.Data` for context registration and entity types. `BmiApp.Service` depends on `BmiApp.Repository`, and `BmiApp.Repository` on `BmiApp.Data`. Dependencies only ever point downward, so no layer can reach back up into the one calling it.
 
 ## Data layer
 In data I have added all of the entities that will be used in the database.
@@ -41,7 +54,7 @@ This is just a folder where the migrations for the database are stored.
 This is a folder for storing all the repository classes. Now, there are an IBmiRepository interface and a BmiRepository class for implementation. This is a simple repository with two methods for viewing and adding BmiRecords to the database.
 
 ### Dependency Injection
-In the DependencyInjection class for this layer of the project there is an AddRepositoryLayer function, which basically just tells the project what the concrete implementations for the IUnitOfWork and IBmiInterface are.
+In the DependencyInjection class for this layer of the project there is an AddRepositoryLayer function, which basically just tells the project what the concrete implementations for the IUnitOfWork and IBmiRepository are.
 The ConfigureIdentity function is used for configuring the identity platform to work with our database context and also to tell the user that they must provide an email address.
 
 ## Service
@@ -51,7 +64,8 @@ This is the service layer of the application, this is where all the business log
 There is an IBmiService interface and an BmiService implementation. This service "talks" to the BMI Repository. It has two methods: Writing a BMI Record to database and getting all BMI records for a specific user. It maps DTOs to database entities and saves / retrieves them using the Unit of Work
 
 ### Dto Folder
-This folder contains data transfer objects which the API gets from the client. There is a LoginDto, RegisterDto, BmiReadDto and BmiWriteDto.
+This folder contains data transfer objects which the API gets from the client. There is a LoginDto and a UserDto for the account endpoints, and a BmiReadRecordDto and
+BmiWriteRecordDto for the BMI endpoints.
 
 ### Mapping folder
 This folder contains just one class, MapperInitializer. Since this project uses AutoMapper with dependency injection to map DTOs to entities and vice versa it needs a class which tells the AutoMapper how it should be configured. This is where that happens.
@@ -59,8 +73,12 @@ This folder contains just one class, MapperInitializer. Since this project uses 
 ### Auth folder
 This folder contains the IAuthManager interface and its implementation, the AuthManager class. This is where we create JWT tokens and validate logged in users. The CreateToken() function generates a JWT token which is later used for authorization in the API.
 
+Alongside them sits the JwtKey class, which reads the signing key out of configuration and checks that it is present and long enough before handing it back. Token creation here and token validation in this layer's dependency injection both go through it, so the key is resolved in one place and a misconfigured key is reported the same way for both.
+
 ### Dependency Injection
-The DependencyInjection class sets up the dependencies for this layer. It also configures MediatR for the project and it configures the Jwt generation.
+The DependencyInjection class sets up the dependencies for this layer. It also configures MediatR for the project and it configures the Jwt generation. The ConfigureJwt function builds the bearer
+token validation parameters and takes the signing key from configuration through JwtKey, which
+means the API refuses to start if the key was never supplied.
 
 ## Web API
 The Web Api layer is responsible for handling user requests. There are two controllers, one is the AccountsController, which handles requests related to logging in and registering, and the BmiController, which contains two endpoints for writing and reading BMI records (these endpoints are authenticated so a JWT token from the API is needed to execute these requests successfully). Both controllers communicate with both the service layer and the client to perform these operations.
@@ -109,32 +127,96 @@ When the user view their saved results, this is what they see:
 ![image](https://user-images.githubusercontent.com/48998036/154129624-2e311717-d885-4ff4-996a-62742b5f1351.png)
 
 
-# Development process
-I first developed the API and tested it using Swagger and Postman. This process was not hard at all, but I had a couple of issues that really wasted a lot of time for nothing. First, I had a problem where I accidentaly injected a class instead of an interface in one of the services I was writing. This obviously caused an error which was really hard to find, I spent an entire day thinking that something was wrong with how I performed the dependency injection
+# Design notes
 
-Second, I had trouble performing the migrations (since I have never done migrations in an Onion Layer Architecture project before). This also killed a lot of time, since I was not sure how to configure the thing to look in the correct place for the startup project.
+Data access sits behind the repository and unit of work patterns. `RepositoryBase<T>` carries the query and write operations that every entity needs against its `DbSet<T>`, `BmiRepository` adds the two BMI specific queries on top of it, and `UnitOfWork` owns the single `SaveChanges` call, so a service method commits its work once rather than writing piecemeal.
 
-In overall, sooo much time wasted on configurations :(. I believe I could have done all of this faster if it wasn't for these two things and some bugs which I spent a lot of time fixing.
+DTOs are kept separate from entities on purpose. The shape the API exposes and the shape the database stores change for different reasons, and keeping them apart means an entity can gain a column without that column appearing in a response. AutoMapper holds the translation between the two in one profile, `MapperInitializer`, instead of it being spread across the controllers.
 
-# Possible improvement
-Since I don't want to send this project too late, I will mention these changes I want to do and then implement them if needed.
+Authentication uses Microsoft Identity for user and role storage and JWT bearer tokens for the API itself, which keeps the endpoints stateless: `BmiRecordsController` needs nothing but the token to authorize a request. `AuthManager` validates credentials against Identity and mints the token, and the signing key is read through `JwtKey` so both signing and validation agree on where it comes from and fail the same way when it is absent.
 
-## General
-- I really should have not put the cleint side app in the same folder as the sln. I didn't plan for this since I thought it was going to be like on previous projects I've worked on where the client and api are on a seperate git repo.
+Migrations live in `BmiApp.Repository` next to the context, while the connection string lives in `BmiApp.Api`. That split is why the `dotnet ef` command under Getting started passes a project and a startup project separately, and it keeps database configuration in the layer that owns the database.
+
+# Roadmap
+
+Natural next steps, in rough order of how much they would add:
 
 ## API
-- The API folder structure could use some work. I was in a hurry and I believe this can be slightly improved in some places.
-- You might notice that some dependencies are not declared in the correct project, this is because I have never built a project with this architecture from the ground up before, and I additionally ran into some problems while developing, which resulted in me possibly declaring the dependencies in the wrong place.
-- Some of the authentication logic is performed in the controller. It needs to be performed in the AuthManager service. I was kind of in a hurry, this can be easily fixed.
-- A lot of unused imports need to be removed.
-- The secret for encoding the JWT Tokens must not be placed in the appsettings.json. I did this in order not to make the project too hard for cloning, since the other option was to declare it as an environment variable in my Windows operating system (or find some other complex solution).
-- The JWT token service can be made more advanced and slightly more secure.
-- The endpoints for BMI records currently do not check who is the current user, again, I did not address this for the sake of time, but it is an easy fix which I can implement if necessary.
-- The logout is currently only front end.
+- Read the user identity from the token in the BMI record endpoints instead of taking an email from the route, so a record is always scoped to the caller who owns it.
+- Move the remaining credential handling out of AccountController and into AuthManager, leaving the controller to translate results into HTTP responses.
+- Add refresh tokens with a shorter access token lifetime, and server side invalidation so logging out revokes a token rather than only discarding it on the client.
+- Return validation problems through a single exception handling middleware, so every endpoint reports failures in the same shape.
+- Move to a supported .NET release. The project targets .NET 5, and the upgrade to the current LTS is mostly a matter of the target framework and package versions.
 
 ## Angular
-- I should have created a generic Ok dialog which you can feed information through an Input so I don't have multiple components just for showing different kinds of information.
-- The project could really use a http error interceptor for showing correct information when an error happens.
-- Perhaps the login and register forms should have been programmed as a dialog.
-- Currently, some parts of the app are not responsive, again, for the sake of time.
-- I really want to add a toggle button on the home page so the user can enter the parameters in Metric or Imperial.
+- Replace the per message success components with one dialog component that takes its content as an input.
+- Add an HTTP error interceptor so a failed request surfaces a real message instead of failing quietly.
+- Present login and registration as dialogs, matching the rest of the Material layout.
+- Finish the responsive layout for the calculator and the records table.
+- Add a metric and imperial toggle on the calculator so height and weight can be entered either way.
+
+# Getting started
+
+## Prerequisites
+
+- .NET 5 SDK
+- SQL Server, either LocalDB or a full instance
+- Node.js and the Angular CLI, to run the client app
+
+## Supplying the JWT signing key
+
+The API signs its tokens with an HMAC-SHA256 key that it reads from configuration on startup. `appsettings.json` carries an empty `Jwt:Key` placeholder and no key value, so the key has to be supplied from outside the repository. Either of the following does that.
+
+User secrets keep the key in your user profile rather than the working tree, which suits local development:
+
+```
+dotnet user-secrets set "Jwt:Key" "<your key>" --project src/BmiApp.Api
+```
+
+An environment variable suits CI and hosting. The double underscore is how .NET maps a flat variable name onto the nested `Jwt:Key` entry:
+
+```
+setx Jwt__Key "<your key>"         # Windows, applies to new shells
+$env:Jwt__Key = "<your key>"       # PowerShell, current shell only
+export Jwt__Key="<your key>"       # bash
+```
+
+The key has to be at least 32 bytes, matching the 256 bit output that HMAC-SHA256 signs with. Any cryptographically random string of that length works:
+
+```
+# PowerShell
+$b=[byte[]]::new(32); [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
+
+# bash
+openssl rand -base64 32
+```
+
+A key that is missing or too short stops the API during startup, with a message naming the setting and how to supply it, instead of surfacing later as a failed login.
+
+## Database
+
+`ConnectionStrings:sqlConnection` in `appsettings.json` points at the local default SQL Server instance and uses integrated security, so it carries no credentials. Change it if your instance differs, then apply the three migrations:
+
+```
+dotnet ef database update --project src/BmiApp.Repository --startup-project src/BmiApp.Api
+```
+
+The context and the migrations live in `BmiApp.Repository` while the connection string lives in `BmiApp.Api`, which is why the command names both.
+
+## Running the API
+
+```
+dotnet run --project src/BmiApp.Api
+```
+
+In the Development environment Swagger is served at `/swagger`, which is enough to register a user, log in, and call the authenticated endpoints with the token that comes back.
+
+## Running the client
+
+```
+cd client
+npm install
+npm start
+```
+
+The client reads its API base address from `client/src/environments/environment.ts`, which is set to `https://localhost:44332/` to match the IIS Express profile in `launchSettings.json`. Starting the API with `dotnet run` instead serves it on `https://localhost:5001`, so point that setting at whichever address you are using.
