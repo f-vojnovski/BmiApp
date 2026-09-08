@@ -1,7 +1,6 @@
 export interface RegisterDto {
   email: string;
   password: string;
-  roles: string[];
 }
 
 export interface LoginDto {

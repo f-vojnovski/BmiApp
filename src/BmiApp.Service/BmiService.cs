@@ -30,9 +30,10 @@ namespace BmiApp.Service
             return bmiRecordsDto;
         }
 
-        public async Task AddBmiRecord(BmiWriteRecordDto bmiWriteRecordDto)
+        public async Task AddBmiRecord(string email, BmiWriteRecordDto bmiWriteRecordDto)
         {
             var bmiRecord = _mapper.Map<BmiRecord>(bmiWriteRecordDto);
+            bmiRecord.Email = email;
 
             _unitOfWork.BmiRecords.AddRecord(bmiRecord);
             await _unitOfWork.Save();

@@ -11,6 +11,6 @@ namespace BmiApp.Service
     {
         public Task<IEnumerable<BmiReadRecordDto>> GetAllBmiRecordsByEmail(string email);
 
-        public Task AddBmiRecord(BmiWriteRecordDto bmiWriteRecordDto);
+        public Task AddBmiRecord(string email, BmiWriteRecordDto bmiWriteRecordDto);
     }
 }
