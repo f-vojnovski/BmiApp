@@ -11,6 +11,7 @@ This application uses:
 - Microsoft Entity Framework Core for database communication (along with Entity Framework Core Sql Server, Entity Framework Core Design, Entity Framework Core Tools)
 - SQL database
 - Auto Mapper for mapping entities to DTO and vice versa
+- xUnit for the test suite
 - MediatR for less code coupling.
 - Angular 13 with Angular Material for the client app
 
@@ -24,6 +25,8 @@ src/
 ├── BmiApp.Service/     business logic, DTOs, AutoMapper profile, JWT auth manager
 ├── BmiApp.Repository/  DbContext, repositories, unit of work, EF Core migrations
 └── BmiApp.Data/        entities and the Identity role configuration
+tests/
+└── BmiApp.Tests/       authorization and request contract tests
 client/                 Angular client, outside the solution
 ```
 
@@ -135,7 +138,7 @@ DTOs are kept separate from entities on purpose. The shape the API exposes and t
 
 Authentication uses Microsoft Identity for user and role storage and JWT bearer tokens for the API itself, which keeps the endpoints stateless: `BmiRecordsController` needs nothing but the token to authorize a request. `AuthManager` validates credentials against Identity and mints the token, and the signing key is read through `JwtKey` so both signing and validation agree on where it comes from and fail the same way when it is absent.
 
-Record ownership follows from that token rather than from the request. `BmiRecordsController` reads the name claim and hands it to the service layer, which means a caller reads and writes their own history and there is no owner field for a request to set. Registration works the same way round: the role is a constant in the controller, and the password goes to `UserManager.CreateAsync` so the configured Identity validators run instead of being bypassed by hashing it by hand.
+Record ownership follows from that token rather than from the request. `BmiRecordsController` reads the name claim and hands it to the service layer, which means a caller reads and writes their own history and there is no owner field for a request to set. Registration works the same way round: the role is a constant in the controller, and the password goes to `UserManager.CreateAsync` so the configured Identity validators run instead of being bypassed by hashing it by hand. `BmiApp.Tests` covers those boundaries, including the case that one user's request cannot reach another user's records.
 
 Migrations live in `BmiApp.Repository` next to the context, while the connection string lives in `BmiApp.Api`. That split is why the `dotnet ef` command under Getting started passes a project and a startup project separately, and it keeps database configuration in the layer that owns the database.
 
@@ -211,6 +214,14 @@ dotnet run --project src/BmiApp.Api
 ```
 
 In the Development environment Swagger is served at `/swagger`, which is enough to register a user, log in, and call the authenticated endpoints with the token that comes back.
+
+## Running the tests
+
+```
+dotnet test
+```
+
+The suite runs the controller, service, unit of work and repository together over an in-memory database. Most of it covers the authorization boundary on the BMI record endpoints.
 
 ## Running the client
 
