@@ -12,7 +12,6 @@ This application uses:
 - SQL database
 - Auto Mapper for mapping entities to DTO and vice versa
 - xUnit for the test suite
-- MediatR for less code coupling.
 - Angular 13 with Angular Material for the client app
 
 # Api
@@ -79,7 +78,7 @@ This folder contains the IAuthManager interface and its implementation, the Auth
 Alongside them sits the JwtKey class, which reads the signing key out of configuration and checks that it is present and long enough before handing it back. Token creation here and token validation in this layer's dependency injection both go through it, so the key is resolved in one place and a misconfigured key is reported the same way for both.
 
 ### Dependency Injection
-The DependencyInjection class sets up the dependencies for this layer. It also configures MediatR for the project and it configures the Jwt generation. The ConfigureJwt function builds the bearer
+The DependencyInjection class sets up the dependencies for this layer and configures the Jwt generation. The ConfigureJwt function builds the bearer
 token validation parameters and takes the signing key from configuration through JwtKey, which
 means the API refuses to start if the key was never supplied.
 
