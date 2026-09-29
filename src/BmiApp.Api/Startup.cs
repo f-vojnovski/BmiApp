@@ -35,7 +35,6 @@ namespace BmiApp.Api
 
             services.AddControllers();
 
-            services.AddAuthentication();
             services.ConfigureIdentity();
             services.ConfigureJwt(Configuration);
 
@@ -51,8 +50,6 @@ namespace BmiApp.Api
             services.AddServiceLayer();
 
             services.AddRepositoryLayer();
-
-            services.AddTransient<IBmiService, BmiService>();
 
             services.AddAutoMapper();
 

@@ -11,6 +11,7 @@ export class ViewBmiRecordsComponent implements OnInit {
   records: BmiReadRecordDto[];
   displayedColumns: string[] = ['weight', 'height', 'bmi'];
   dataSource = null;
+  errorMessage?: string;
 
   constructor(private bmiService: BmiService) {}
 
@@ -21,6 +22,7 @@ export class ViewBmiRecordsComponent implements OnInit {
         this.dataSource = this.records;
       },
       error: () => {
+        this.errorMessage = 'Something went wrong while loading your saved results!';
       }
     });
   }

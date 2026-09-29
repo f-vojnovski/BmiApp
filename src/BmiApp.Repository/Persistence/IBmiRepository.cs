@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BmiApp.Data;
 using BmiApp.Data.Model;
 using BmiApp.Repository.Core;
 

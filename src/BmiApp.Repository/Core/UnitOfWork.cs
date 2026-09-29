@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BmiApp.Repository.Persistence;
 
 namespace BmiApp.Repository.Core
@@ -18,20 +17,6 @@ namespace BmiApp.Repository.Core
         public async Task Save()
         {
             await _context.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
         }
     }
 }

@@ -29,11 +29,12 @@ export class BmiCalculatorComponent implements OnInit {
 
   onCalculateBmi(): void {
     this.calculatedBmi = this.calculateBmi(this.userWeight!, this.userHeight!);
+    this.resultSaved = false;
+    this.errorMessage = undefined;
   }
 
   calculateBmi(weight: number, height: number): number {
     return weight / (((height / 100) * height) / 100);
-    this.resultSaved = false;
   }
 
   onSaveBmi(): void {

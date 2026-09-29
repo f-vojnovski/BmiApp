@@ -1,5 +1,8 @@
 <div class="results-container">
     <mat-card-title>Your saved results</mat-card-title>
+    <div *ngIf="errorMessage">
+        <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
+    </div>
     <table mat-table [dataSource]="records" class="mat-elevation-z8">
         <!-- Weight Column -->
         <ng-container matColumnDef="weight">
